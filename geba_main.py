@@ -14,8 +14,21 @@ size = WIDTH, HEIGHT = (800, 800)
 cellwidth = WIDTH//4
 
 screen = pygame.display.set_mode( size )
-board = np.zeros((4,4))
-board[(2,3)] = 4
+#ehitab maatrixi mida kasutab m'ngulauana, [ks laiem kui peaks ja 22r 9 t'idetud et ''reprobleeme v'ltida
+board = np.zeros((5,5))
+for i in range(5):
+    board[i,4] = 9
+    board[4,i] = 9
+
+# Gamestate salvestab millises hetkes mmang on
+# 0 - valib flippimistile
+# 1 - valib kuhu tile flippida
+# 2 - valib uue tile kuhu endaoma panna
+# 3 - valib millist v'rvi kasutada. m'ng algab alati 2 pealt
+gamestate = 2
+# kumma m'ngija kord on, 0 on ring, 1 on rist
+player = 0
+
 
 def draw_lines(size):
     for line_number in range(4):
@@ -44,9 +57,29 @@ def draw_pick_color(spot):
 
 def pick_color():
     if pygame.mouse.get_pos()[0]%cellwidth < 100:
-        draw_tile(orange, 'o', mouse_pos())
+        board[mouse_pos()[1],mouse_pos()[0]] = 1
     if pygame.mouse.get_pos()[0]%cellwidth > 100:
-        draw_tile(blue, 'o', mouse_pos())
+        board[mouse_pos()[1],mouse_pos()[0]] = 2
+
+def flip_pick():
+    match player:
+        case 0:
+            if board[mouse_pos()[1],mouse_pos()[0]] in (1,2):
+                for i in (-1,0,1):
+                    for j in (-1,0,1):
+                        if i*j == 0: 
+                            if board[mouse_pos()[1]+i,mouse_pos()[0]+j] == 0:
+                                board[mouse_pos()[1]+i,mouse_pos()[0]+j] = 6
+                            
+                
+        case 1:
+            if board[mouse_pos()[1],mouse_pos()[0]] in (3,4):
+                for i in (-1,0,1):
+                    for j in (-1,0,1):
+                        if i*j == 0:
+                            if board[mouse_pos()[1]+i,mouse_pos()[0]+j] == 0:
+                                board[mouse_pos()[1]+i,mouse_pos()[0]+j] = 6
+
 
 # joonistab igasse ruutu vastava tile, 1, 2 rist 3, 4 ring, nendest paaritud oranz, paaris sinine
 # 5 on colorpick, 6-9 tbd 
@@ -73,10 +106,33 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
-            board[mouse_pos()[1],mouse_pos()[0]] = random.randint(1, 3)
-            print(board)
+            match gamestate:
+                case 0:
+                    if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
+                        flip_pick()
+                        print("jep sain")
+                        gamestate = 1
 
-    
+                case 1:
+                    if board[mouse_pos()[1],mouse_pos()[0]] == 0:
+                        print('flipid siia sain')# todo flip funktsioon
+                        gamestate = 2
+                case 2:
+                    if board[mouse_pos()[1],mouse_pos()[0]] == 0:
+                        board[mouse_pos()[1],mouse_pos()[0]] = 5
+                        gamestate = 3
+                case 3:
+                    if board[mouse_pos()[1],mouse_pos()[0]] == 5:
+                        pick_color()
+                        gamestate = 0
+
+
+            #board[mouse_pos()[1],mouse_pos()[0]] = random.randint(1, 5)
+            print(board)
+            print(gamestate)
+            print(mouse_pos())
+            print(board[mouse_pos()[0], mouse_pos()[1]])
+
     draw_lines(size)    
     draw_board(board)
     pygame.display.update()
