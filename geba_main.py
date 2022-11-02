@@ -14,13 +14,13 @@ size = WIDTH, HEIGHT = (800, 800)
 cellwidth = WIDTH//4
 
 screen = pygame.display.set_mode( size )
-#ehitab maatrixi mida kasutab m'ngulauana, [ks laiem kui peaks ja 22r 9 t'idetud et ''reprobleeme v'ltida
+#ehitab maatrixi mida kasutab m'ngulauana, [ks laiem kui peaks ja 22r 9 t'idetud et 22reprobleeme v'ltida
 board = np.zeros((5,5))
 for i in range(5):
     board[i,4] = 9
     board[4,i] = 9
 
-# Gamestate salvestab millises hetkes mmang on
+# Gamestate salvestab millises hetkes mang on
 # 0 - valib flippimistile
 # 1 - valib kuhu tile flippida
 # 2 - valib uue tile kuhu endaoma panna
@@ -39,12 +39,13 @@ def draw_lines(size):
 def draw_tile(colour, shape, spot):
     if shape == 'x':
         pygame.draw.rect(screen, colour, (spot[0]*cellwidth, spot[1]*cellwidth, WIDTH//4, HEIGHT//4))
-        pygame.draw.line(screen, black, (spot[0]*cellwidth, spot[1]*cellwidth), (spot[0]*cellwidth+WIDTH//4,spot[1]*cellwidth+HEIGHT//4),width=10)
-        pygame.draw.line(screen, black, (spot[0]*cellwidth, spot[1]*cellwidth+HEIGHT//4), (spot[0]*cellwidth+WIDTH//4,spot[1]*cellwidth),width=10)
+        pygame.draw.line(screen, white, (spot[0]*cellwidth, spot[1]*cellwidth), (spot[0]*cellwidth+WIDTH//4,spot[1]*cellwidth+HEIGHT//4),width=10)
+        pygame.draw.line(screen, white, (spot[0]*cellwidth, spot[1]*cellwidth+HEIGHT//4), (spot[0]*cellwidth+WIDTH//4,spot[1]*cellwidth),width=10)
     elif shape == 'o':
         pygame.draw.rect(screen, colour, (spot[0]*cellwidth, spot[1]*cellwidth, WIDTH//4, HEIGHT//4))
-        pygame.draw.circle(screen, black, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), 80)
-
+        pygame.draw.circle(screen, white, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), 80)
+        pygame.draw.circle(screen, colour, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), 60)
+        
 def mouse_pos():
     spot = list(pygame.mouse.get_pos())
     for i in range(2):
@@ -57,14 +58,31 @@ def draw_pick_color(spot):
 
 def pick_color():
     if pygame.mouse.get_pos()[0]%cellwidth < 100:
-        board[mouse_pos()[1],mouse_pos()[0]] = 1
+        match player:
+            case 0:
+                board[mouse_pos()[1],mouse_pos()[0]] = 3
+            case 1:
+                board[mouse_pos()[1],mouse_pos()[0]] = 1
     if pygame.mouse.get_pos()[0]%cellwidth > 100:
-        board[mouse_pos()[1],mouse_pos()[0]] = 2
+        match player:  
+            case 0:
+                board[mouse_pos()[1],mouse_pos()[0]] = 4
+            case 1:
+                board[mouse_pos()[1],mouse_pos()[0]] = 2
 
+def flip_clear():
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i,j] == 6:
+                board[i,j] = 0
+
+saved_tile = []
 def flip_pick():
+    global saved_tile
     match player:
         case 0:
             if board[mouse_pos()[1],mouse_pos()[0]] in (1,2):
+                saved_tile = [mouse_pos()[1],mouse_pos()[0]]
                 for i in (-1,0,1):
                     for j in (-1,0,1):
                         if i*j == 0: 
@@ -74,12 +92,27 @@ def flip_pick():
                 
         case 1:
             if board[mouse_pos()[1],mouse_pos()[0]] in (3,4):
+                saved_tile = [mouse_pos()[1],mouse_pos()[0]]
                 for i in (-1,0,1):
                     for j in (-1,0,1):
                         if i*j == 0:
                             if board[mouse_pos()[1]+i,mouse_pos()[0]+j] == 0:
                                 board[mouse_pos()[1]+i,mouse_pos()[0]+j] = 6
 
+
+def tile_flip():
+    if board[mouse_pos()[1],mouse_pos()[0]] == 6:
+        match board[saved_tile[0],saved_tile[1]]:
+            case 1:
+                board[mouse_pos()[1],mouse_pos()[0]] = board[saved_tile[0],saved_tile[1]] + 1
+            case 2:
+                board[mouse_pos()[1],mouse_pos()[0]] = board[saved_tile[0],saved_tile[1]] - 1
+            case 3:
+                board[mouse_pos()[1],mouse_pos()[0]] = board[saved_tile[0],saved_tile[1]] + 1
+            case 4:
+                board[mouse_pos()[1],mouse_pos()[0]] = board[saved_tile[0],saved_tile[1]] - 1
+        
+        board[saved_tile[0],saved_tile[1]] = 0
 
 # joonistab igasse ruutu vastava tile, 1, 2 rist 3, 4 ring, nendest paaritud oranz, paaris sinine
 # 5 on colorpick, 6-9 tbd 
@@ -109,13 +142,14 @@ while True:
             match gamestate:
                 case 0:
                     if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
+                        flip_clear()
                         flip_pick()
-                        print("jep sain")
                         gamestate = 1
 
                 case 1:
-                    if board[mouse_pos()[1],mouse_pos()[0]] == 0:
-                        print('flipid siia sain')# todo flip funktsioon
+                    if board[mouse_pos()[1],mouse_pos()[0]] == 6:
+                        tile_flip()
+                        flip_clear()
                         gamestate = 2
                 case 2:
                     if board[mouse_pos()[1],mouse_pos()[0]] == 0:
@@ -124,15 +158,21 @@ while True:
                 case 3:
                     if board[mouse_pos()[1],mouse_pos()[0]] == 5:
                         pick_color()
+                        if player == 0:
+                            player = 1
+                        elif player == 1:
+                            player = 0
                         gamestate = 0
 
 
             #board[mouse_pos()[1],mouse_pos()[0]] = random.randint(1, 5)
             print(board)
+            print(saved_tile)
             print(gamestate)
             print(mouse_pos())
             print(board[mouse_pos()[0], mouse_pos()[1]])
-
-    draw_lines(size)    
+    
+    screen.fill(BG_COLOUR)
     draw_board(board)
+    draw_lines(size)
     pygame.display.update()
