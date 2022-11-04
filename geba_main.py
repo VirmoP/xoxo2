@@ -1,9 +1,11 @@
 import pygame, sys
 import numpy as np
 import random
+import time
 
 
 pygame.init()
+
 
 BG_COLOUR = (20, 150, 90)
 blue = (0,2,150)
@@ -131,6 +133,34 @@ def draw_board(board):
                 case 5:
                     draw_pick_color((i,j))
 
+def win_check(board):
+    for x in range(1,5): #käib kõik nuppude variandid, st 1,2,3,4 läbi
+        for j in range(2):
+            for i in range(2):
+                if board[i][j]==board[i][j+1]==board[i][j+2]==(x):
+                    return True
+                if board[i][j]==board[i+1][j]==board[i+2][j]==(x):
+                    return True
+                if board[i][j]==board[i+1][j+1]==board[i+2][j+2]== (x):
+                    return True
+        if board[1][0]==board[2][1]==board[3][2]== (x):
+            return True
+        if board[0][1]==board[1][2]==board[2][3]== (x):
+            return True
+    return False
+
+def text_objects(text, font):
+    textSurface = font.render(text, True, black)
+    return textSurface, textSurface.get_rect()
+
+def message_display(text):
+    largeText = pygame.font.Font('freesansbold.ttf',115)
+    TextSurf, TextRect = text_objects(text, largeText)
+    TextRect.center = ((WIDTH/2),(HEIGHT/2))
+    screen.blit(TextSurf, TextRect)
+    pygame.display.update()
+    time.sleep(2)
+    
 
 screen.fill(BG_COLOUR)
 while True:
@@ -151,6 +181,9 @@ while True:
                         tile_flip()
                         flip_clear()
                         gamestate = 2
+                        if win_check(board) == True:
+                            message_display('Good job!')
+                            
                 case 2:
                     if board[mouse_pos()[1],mouse_pos()[0]] == 0:
                         board[mouse_pos()[1],mouse_pos()[0]] = 5
@@ -176,3 +209,4 @@ while True:
     draw_board(board)
     draw_lines(size)
     pygame.display.update()
+    
