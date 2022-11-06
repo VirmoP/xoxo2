@@ -135,18 +135,26 @@ def draw_board(board):
 
 def win_check(board):
     for x in range(1,5): #käib kõik nuppude variandid, st 1,2,3,4 läbi
-        for j in range(2):
-            for i in range(2):
-                if board[i][j]==board[i][j+1]==board[i][j+2]==(x):
-                    return True
-                if board[i][j]==board[i+1][j]==board[i+2][j]==(x):
-                    return True
-                if board[i][j]==board[i+1][j+1]==board[i+2][j+2]== (x):
-                    return True
-        if board[1][0]==board[2][1]==board[3][2]== (x):
-            return True
-        if board[0][1]==board[1][2]==board[2][3]== (x):
-            return True
+        for j in range(4):
+            for i in range(4):
+                #vertical
+                if i-1 >= 0 and i+1 <= 3:
+                    if board[i][j] == board[i+1][j] == board[i-1][j] == x:
+                        return True
+
+                #horizontal
+                if j-1 >= 0 and j+1 <= 3:
+                    if board[i][j] == board[i][j+1] == board[i][j-1] == x:
+                        return True
+
+                #desc diag
+                if i-1 >= 0 and i+1 <= 3 and j-1 >= 0 and j+1 <= 3:
+                    if board[i][j] == board[i+1][j+1] == board[i-1][j-1] == x:
+                        return True
+
+                    #asc diag
+                    if board[i][j] == board[i+1][j-1] == board[i-1][j+1] == x:
+                        return True
     return False
 
 def text_objects(text, font):
