@@ -134,9 +134,10 @@ def draw_board(board):
                     draw_pick_color((i,j))
 
 def win_check(board):
-    for x in range(1,5): #käib kõik nuppude variandid, st 1,2,3,4 läbi
-        for j in range(4):
-            for i in range(4):
+    #käib kõik nuppude variandid, st 1,2,3,4 läbi
+    for j in range(4):
+        for i in range(4):
+            if board[i][j] in (1,2,3,4):
                 #vertical
                 if i-1 >= 0 and i+1 <= 3:
                     if board[i][j] == board[i+1][j] == board[i-1][j] == x:
