@@ -140,21 +140,21 @@ def win_check(board):
             if board[i][j] in (1,2,3,4):
                 #vertical
                 if i-1 >= 0 and i+1 <= 3:
-                    if board[i][j] == board[i+1][j] == board[i-1][j] == x:
+                    if board[i][j] == board[i+1][j] == board[i-1][j]:
                         return True
 
                 #horizontal
                 if j-1 >= 0 and j+1 <= 3:
-                    if board[i][j] == board[i][j+1] == board[i][j-1] == x:
+                    if board[i][j] == board[i][j+1] == board[i][j-1]:
                         return True
 
                 #desc diag
                 if i-1 >= 0 and i+1 <= 3 and j-1 >= 0 and j+1 <= 3:
-                    if board[i][j] == board[i+1][j+1] == board[i-1][j-1] == x:
+                    if board[i][j] == board[i+1][j+1] == board[i-1][j-1]:
                         return True
 
                     #asc diag
-                    if board[i][j] == board[i+1][j-1] == board[i-1][j+1] == x:
+                    if board[i][j] == board[i+1][j-1] == board[i-1][j+1]:
                         return True
     return False
 
@@ -172,50 +172,62 @@ def message_display(text):
     
 
 screen.fill(BG_COLOUR)
+
+menu = False #laseb menüü ja mängimise vahel muuta, kui menuu while tehtud ss siin muuda trueks
+
 while True:
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            match gamestate:
-                case 0:
-                    if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
-                        flip_clear()
-                        flip_pick()
-                        gamestate = 1
-
-                case 1:
-                    if board[mouse_pos()[1],mouse_pos()[0]] == 6:
-                        tile_flip()
-                        flip_clear()
-                        gamestate = 2
-                        if win_check(board) == True:
-                            message_display('Good job!')
-                            
-                case 2:
-                    if board[mouse_pos()[1],mouse_pos()[0]] == 0:
-                        board[mouse_pos()[1],mouse_pos()[0]] = 5
-                        gamestate = 3
-                case 3:
-                    if board[mouse_pos()[1],mouse_pos()[0]] == 5:
-                        pick_color()
-                        if player == 0:
-                            player = 1
-                        elif player == 1:
-                            player = 0
-                        gamestate = 0
-
-
-            #board[mouse_pos()[1],mouse_pos()[0]] = random.randint(1, 5)
-            print(board)
-            print(saved_tile)
-            print(gamestate)
-            print(mouse_pos())
-            print(board[mouse_pos()[0], mouse_pos()[1]])
+    while menu:
+        screen.fill(BG_COLOUR)
+        
     
-    screen.fill(BG_COLOUR)
-    draw_board(board)
-    draw_lines(size)
-    pygame.display.update()
+    while not menu:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                match gamestate:
+                    case 0:
+                        if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
+                            flip_clear()
+                            flip_pick()
+                            gamestate = 1
+
+                    case 1:
+                        if board[mouse_pos()[1],mouse_pos()[0]] == 6:
+                            tile_flip()
+                            flip_clear()
+                            gamestate = 2
+                            if win_check(board) == True:
+                                draw_board(board)
+                                draw_lines(size)
+                                pygame.display.update()
+                                message_display('Good job!')
+                                pygame.display.update()
+                                
+                    case 2:
+                        if board[mouse_pos()[1],mouse_pos()[0]] == 0:
+                            board[mouse_pos()[1],mouse_pos()[0]] = 5
+                            gamestate = 3
+                    case 3:
+                        if board[mouse_pos()[1],mouse_pos()[0]] == 5:
+                            pick_color()
+                            if player == 0:
+                                player = 1
+                            elif player == 1:
+                                player = 0
+                            gamestate = 0
+
+
+                #board[mouse_pos()[1],mouse_pos()[0]] = random.randint(1, 5)
+                print(board)
+                print(saved_tile)
+                print(gamestate)
+                print(mouse_pos())
+                print(board[mouse_pos()[0], mouse_pos()[1]])
+        
+        screen.fill(BG_COLOUR)
+        draw_board(board)
+        draw_lines(size)
+        pygame.display.update()
     
