@@ -11,9 +11,12 @@ BG_COLOUR = (20, 150, 90)
 blue = (0,2,150)
 orange = (200, 50, 50)
 black = (0,0,0)
+Button_dark = (10,130, 70)
 white = (255, 255, 255)
 size = WIDTH, HEIGHT = (800, 800)
 cellwidth = WIDTH//4
+font = pygame.font.Font("freesansbold.ttf",WIDTH//50)
+
 
 screen = pygame.display.set_mode( size )
 #ehitab maatrixi mida kasutab m'ngulauana, [ks laiem kui peaks ja 22r 9 t'idetud et 22reprobleeme v'ltida
@@ -45,8 +48,8 @@ def draw_tile(colour, shape, spot):
         pygame.draw.line(screen, white, (spot[0]*cellwidth, spot[1]*cellwidth+HEIGHT//4), (spot[0]*cellwidth+WIDTH//4,spot[1]*cellwidth),width=10)
     elif shape == 'o':
         pygame.draw.rect(screen, colour, (spot[0]*cellwidth, spot[1]*cellwidth, WIDTH//4, HEIGHT//4))
-        pygame.draw.circle(screen, white, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), 80)
-        pygame.draw.circle(screen, colour, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), 60)
+        pygame.draw.circle(screen, white, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), WIDTH//10)
+        pygame.draw.circle(screen, colour, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), WIDTH//10-20)
         
 def mouse_pos():
     spot = list(pygame.mouse.get_pos())
@@ -59,13 +62,13 @@ def draw_pick_color(spot):
     pygame.draw.rect(screen, blue, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth, WIDTH//8, HEIGHT//4))
 
 def pick_color():
-    if pygame.mouse.get_pos()[0]%cellwidth < 100:
+    if pygame.mouse.get_pos()[0]%cellwidth < WIDTH//8:
         match player:
             case 0:
                 board[mouse_pos()[1],mouse_pos()[0]] = 3
             case 1:
                 board[mouse_pos()[1],mouse_pos()[0]] = 1
-    if pygame.mouse.get_pos()[0]%cellwidth > 100:
+    if pygame.mouse.get_pos()[0]%cellwidth > WIDTH//8:
         match player:  
             case 0:
                 board[mouse_pos()[1],mouse_pos()[0]] = 4
@@ -103,6 +106,7 @@ def flip_pick():
 
 
 def tile_flip():
+    global gamestate
     if board[mouse_pos()[1],mouse_pos()[0]] == 6:
         match board[saved_tile[0],saved_tile[1]]:
             case 1:
@@ -115,6 +119,10 @@ def tile_flip():
                 board[mouse_pos()[1],mouse_pos()[0]] = board[saved_tile[0],saved_tile[1]] - 1
         
         board[saved_tile[0],saved_tile[1]] = 0
+        gamestate = 2
+    else:
+        flip_clear()
+        flip_pick()
 
 # joonistab igasse ruutu vastava tile, 1, 2 rist 3, 4 ring, nendest paaritud oranz, paaris sinine
 # 5 on colorpick, 6-9 tbd 
@@ -169,17 +177,42 @@ def message_display(text):
     screen.blit(TextSurf, TextRect)
     pygame.display.update()
     time.sleep(2)
+
+def text( text, X, Y, colour):
+    text = font.render(text ,True, colour)
+    textRect = text.get_rect()
+    textRect.center = (X, Y)
+    screen.blit(text,textRect)
+
+def draw_menu():
+        #1playerbutton
+        pygame.draw.rect(screen, Button_dark,(WIDTH * 3 //10 - WIDTH//200//2,WIDTH * 2//5 - WIDTH//200//2,WIDTH*2//5 + WIDTH//200,WIDTH//10 + WIDTH//200))	
+        pygame.draw.rect(screen, BG_COLOUR,(WIDTH * 3 //10,WIDTH*2//5,WIDTH*2//5,WIDTH//10))
+
+        #2playerbutton
+        pygame.draw.rect(screen, Button_dark,(WIDTH * 3 //10 - WIDTH//400,WIDTH * 3//5 - WIDTH//400,WIDTH*2//5 + WIDTH//200,WIDTH//10 + WIDTH//200))	
+        pygame.draw.rect(screen, BG_COLOUR,(WIDTH * 3 //10,WIDTH * 3//5,WIDTH*2//5,WIDTH//10))
+
+        text('1 Player',WIDTH//2,WIDTH * 2//5 + 30,blue)
+        text('2 Player',WIDTH//2,WIDTH * 3//5 + 30,blue)
+        text('XOXO',WIDTH//2,WIDTH//5, orange)
+        text('2',WIDTH//2 + WIDTH//200 * 8, WIDTH//5 - WIDTH//200 * 2, blue)
     
 
 screen.fill(BG_COLOUR)
 
-menu = False #laseb menüü ja mängimise vahel muuta, kui menuu while tehtud ss siin muuda trueks
+menu = True #laseb menüü ja mängimise vahel muuta, kui menuu while tehtud ss siin muuda trueks
 
 while True:
     while menu:
-        screen.fill(BG_COLOUR)
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                menu = False
         
-    
+        screen.fill(BG_COLOUR)
+        draw_menu()
+        pygame.display.update()
+            
     while not menu:
         
         for event in pygame.event.get():
@@ -194,10 +227,10 @@ while True:
                             gamestate = 1
 
                     case 1:
-                        if board[mouse_pos()[1],mouse_pos()[0]] == 6:
-                            tile_flip()
+                        tile_flip()
+                        if gamestate == 2:
                             flip_clear()
-                            gamestate = 2
+                        #gamestate = 2
                             if win_check(board) == True:
                                 draw_board(board)
                                 draw_lines(size)
