@@ -2,7 +2,7 @@ import pygame, sys
 import numpy as np
 import random
 import time
-
+import botplayer
 
 pygame.init()
 
@@ -33,7 +33,7 @@ for i in range(5):
 gamestate = 2
 # kumma m'ngija kord on, 0 on ring, 1 on rist
 player = 0
-
+bot = 1
 
 def draw_lines(size):
     for line_number in range(4):
@@ -221,38 +221,62 @@ while True:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 match gamestate:
                     case 0:
-                        if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
-                            flip_clear()
-                            flip_pick()
-                            gamestate = 1
-
-                    case 1:
-                        tile_flip()
-                        if gamestate == 2:
-                            flip_clear()
-                        #gamestate = 2
-                            if win_check(board) == True:
+                        if bot == 1 and player == 1:
+                            board = botplayer.bot_flip(board)
+                            gamestate = 2
+                            if win_check(board):
                                 draw_board(board)
                                 draw_lines(size)
                                 pygame.display.update()
                                 message_display('Good job!')
                                 pygame.display.update()
+                        
+                        else:
+                            if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
+                                flip_clear()
+                                flip_pick()
+                                gamestate = 1
+
+                    case 1:
+                        if bot == 1 and player == 1:
+                            gamestate = 2
+                        
+                        else:
+                            tile_flip()
+                            if gamestate == 2:
+                                flip_clear()
+                                if win_check(board):
+                                    draw_board(board)
+                                    draw_lines(size)
+                                    pygame.display.update()
+                                    message_display('Good job!')
+                                    pygame.display.update()
                                 
                     case 2:
-                        if board[mouse_pos()[1],mouse_pos()[0]] == 0:
-                            board[mouse_pos()[1],mouse_pos()[0]] = 5
-                            gamestate = 3
-                    case 3:
-                        if board[mouse_pos()[1],mouse_pos()[0]] == 5:
-                            pick_color()
-                            if player == 0:
-                                player = 1
-                            elif player == 1:
-                                player = 0
+                        if bot == 1 and player == 1:
+                            board = botplayer.bot_newtile(board)
                             gamestate = 0
+                            player = 0
+                        
+                        else:
+                            if board[mouse_pos()[1],mouse_pos()[0]] == 0:
+                                board[mouse_pos()[1],mouse_pos()[0]] = 5
+                                gamestate = 3
+                    case 3:
+                        if bot == 1 and player == 1:
+                            gamestate = 0
+                            player = 0
+                        
+                        else:
+                            if board[mouse_pos()[1],mouse_pos()[0]] == 5:
+                                pick_color()
+                                if player == 0:
+                                    player = 1
+                                elif player == 1:
+                                    player = 0
+                                gamestate = 0
 
 
-                #board[mouse_pos()[1],mouse_pos()[0]] = random.randint(1, 5)
                 print(board)
                 print(saved_tile)
                 print(gamestate)
