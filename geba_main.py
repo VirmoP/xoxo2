@@ -33,6 +33,7 @@ for i in range(5):
 gamestate = 2
 # kumma m'ngija kord on, 0 on ring, 1 on rist
 player = 0
+#1 t;;tab bot 0 ei t;;ta
 bot = 1
 
 def draw_lines(size):
@@ -142,7 +143,6 @@ def draw_board(board):
                     draw_pick_color((i,j))
 
 def win_check(board):
-    #käib kõik nuppude variandid, st 1,2,3,4 läbi
     for j in range(4):
         for i in range(4):
             if board[i][j] in (1,2,3,4):
