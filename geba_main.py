@@ -254,7 +254,7 @@ while True:
                                 
                     case 2:
                         if bot == 1 and player == 1:
-                            board = botplayer.bot_newtile(board)
+                            board = botplayer.bot_newtilerandom(board)
                             gamestate = 0
                             player = 0
                         

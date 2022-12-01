@@ -1,6 +1,7 @@
 import random
+import copy
 
-def bot_flip(board):
+def bot_fliprandom(board):
     while True:
         x = random.randint(0,4)
         y = random.randint(0,4)
@@ -47,7 +48,7 @@ def bot_flip(board):
     return board                  
 
 
-def bot_newtile(board):
+def bot_newtilerandom(board):
     while True:
         x = random.randint(0,4)
         y = random.randint(0,4)
@@ -87,5 +88,105 @@ def board_value(board):
                     #asc diag
                     if board[i][j] == board[i+1][j-1] == board[i-1][j+1]:
                         value -= 100
+    
+    return value
+
+
+#arvutab iga flippimise v]imaluse kasulikkuse e.g value
+def bot_flip(board):
+    valueboard = {}
+    hetkboard = copy.copy(board)
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] in (3,4):
+                valueboard[(i,j)] = [-10,-10,-10,-10]
+                if 0 in (board[i-1][j],board[i][j+1],board[i+1][j],board[i][j-1]):
+                    if board[i-1][j] == 0:
+                        hetkboard = copy.copy(board)
+                        if board[i][j] == 3:
+                            hetkboard[i-1][j] = 4
+                            hetkboard[i][j] = 0
+                            valueboard[(i,j)][0] = board_value(hetkboard)
+                            
+                        if board[i][j] == 4:
+                            hetkboard[i-1][j] = 3
+                            hetkboard[i][j] = 0
+                            valueboard[(i,j)][0] = board_value(hetkboard)
+                            
+                    if board[i][j+1] == 0:
+                        hetkboard = copy.copy(board)
+                        if board[i][j] == 3:
+                            hetkboard[i][j+1] = 4
+                            hetkboard[i][j] = 0
+                            valueboard[(i,j)][1] = board_value(hetkboard)
+                            
+                        if board[i][j] == 4:
+                            hetkboard[i][j+1] = 3
+                            hetkboard[i][j] = 0
+                            valueboard[(i,j)][1] = board_value(hetkboard)
+                            
+                    if board[i+1][j] == 0:
+                        hetkboard = copy.copy(board)
+                        if board[i][j] == 3:
+                            hetkboard[i+1][j] = 4
+                            hetkboard[i][j] = 0
+                            valueboard[(i,j)][2] = board_value(hetkboard)
+
+                        if board[i][j] == 4:
+                            hetkboard[i+1][j] = 3
+                            hetkboard[i][j] = 0
+                            valueboard[(i,j)][2] = board_value(hetkboard)
+                            
+                    if board[i][j-1] == 0:
+                        hetkboard = copy.copy(board)
+                        if board[i][j] == 3:
+                            hetkboard[i][j-1] = 4
+                            hetkboard[i][j] = 0
+                            valueboard[(i,j)][3] = board_value(hetkboard)
+                            
+                        if board[i][j] == 4:
+                            hetkboard[i][j-1] = 3
+                            hetkboard[i][j] = 0
+                            valueboard[(i,j)][3] = board_value(hetkboard)
+                    
+            else:
+                valueboard[(i,j)] = [-10,-10,-10,-10]
+    suurim = [(0,0), 0]
+    for tile in valueboard:
+        for suund in range(len(valueboard[tile])):
+            if valueboard[tile][suund] > valueboard[suurim[0]][suurim[1]]:
+                suurim = [tile, suund]
+
+    save = board[suurim[0][0]][suurim[0][1]]
+    match suurim[1]:
+        case 0:
+            if save == 3:
+                board[suurim[0][0]-1][suurim[0][1]] = 4
+                board[suurim[0][0]][suurim[0][1]] = 0
+            if save == 4:
+                board[suurim[0][0]-1][suurim[0][1]] = 3
+                board[suurim[0][0]][suurim[0][1]] = 0
+        case 1:
+            if save == 3:
+                board[suurim[0][0]][suurim[0][1]+1] = 4
+                board[suurim[0][0]][suurim[0][1]] = 0
+            if save == 4:
+                board[suurim[0][0]][suurim[0][1]+1] = 3
+                board[suurim[0][0]][suurim[0][1]] = 0
+        case 2:
+            if save == 3:
+                board[suurim[0][0]+1][suurim[0][1]] = 4
+                board[suurim[0][0]][suurim[0][1]] = 0
+            if save == 4:
+                board[suurim[0][0]+1][suurim[0][1]] = 3
+                board[suurim[0][0]][suurim[0][1]] = 0
+        case 3:
+            if save == 3:
+                board[suurim[0][0]][suurim[0][1]-1] = 4
+                board[suurim[0][0]][suurim[0][1]] = 0
+            if save == 4:
+                board[suurim[0][0]][suurim[0][1]-1] = 3
+                board[suurim[0][0]][suurim[0][1]] = 0
+    return board
     
     
