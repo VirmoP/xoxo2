@@ -244,6 +244,13 @@ def clear_board():
         for j in range(len(board[i])):
             if board[i,j] != 0:
                 board[i,j] = 0
+def full_check():
+    for i in range(4):
+        for j in range(4):
+            if board[i,j] == 0:
+                return False
+    return True
+        
                     
 
 screen.fill(BG_COLOUR)
@@ -289,7 +296,7 @@ while True:
                                 pygame.display.update()
                                 message_display('Good job!')
                                 pygame.display.update()
-                                
+                                menu=True
                                 
                         
                         else:
@@ -344,11 +351,16 @@ while True:
                 print(gamestate)
                 print(mouse_pos())
                 print(board[mouse_pos()[0], mouse_pos()[1]])
+                
         
         screen.fill(BG_COLOUR)
         draw_board(board)
         draw_lines(size)
         pygame.display.update()
+        if full_check()==True:
+            message_display('Laud sai täis!')
+            menu=True
+            break
         if menu== True:
            clear_board()
            break
