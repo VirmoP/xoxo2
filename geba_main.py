@@ -243,14 +243,22 @@ def bot_menu():
                 flag=False
                 #return ...
                 # random bot tegevus siia
+
+def clear_board():
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i,j] != 0:
+                board[i,j] = 0
                     
 
 screen.fill(BG_COLOUR)
 
 menu = True #laseb menüü ja mängimise vahel muuta, kui menuu while tehtud ss siin muuda trueks
+
 but1=pygame.Rect(WIDTH//2-100,WIDTH*4//10+10, 200, 40)
 but2=pygame.Rect(WIDTH//2-100,WIDTH*5//10+10, 200, 40)
 but3=pygame.Rect(WIDTH//2-100,WIDTH*6//10+10, 200, 40)
+
 while True:
     while menu:
         for event in pygame.event.get():
@@ -286,6 +294,8 @@ while True:
                                 pygame.display.update()
                                 message_display('Good job!')
                                 pygame.display.update()
+                                
+                                
                         
                         else:
                             if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
@@ -307,6 +317,7 @@ while True:
                                     pygame.display.update()
                                     message_display('Good job!')
                                     pygame.display.update()
+                                    menu=True
                                 
                     case 2:
                         if bot == 1 and player == 1:
@@ -343,4 +354,7 @@ while True:
         draw_board(board)
         draw_lines(size)
         pygame.display.update()
+        if menu== True:
+           clear_board()
+           break
     
