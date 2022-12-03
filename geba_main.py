@@ -187,15 +187,10 @@ def text( text, X, Y, colour):
 def draw_menu():
         #1playerbutton
         pygame.draw.rect(screen,Button_dark,[WIDTH//2-100,WIDTH*4//10+10, 200, 40]) 
-
         #2playerbutton
         pygame.draw.rect(screen,Button_dark,[WIDTH//2-100,WIDTH*5//10+10, 200, 40]) 
-
         #tutorial
         pygame.draw.rect(screen,Button_dark,[WIDTH//2-100,WIDTH*6//10+10, 200, 40]) 
-
-        
-
         text('1 Player',WIDTH//2,WIDTH * 4//10 + 30,blue)
         text('2 Player',WIDTH//2,WIDTH * 5//10 + 30,blue)
         text('XOXO',WIDTH//2,WIDTH//5, orange)
