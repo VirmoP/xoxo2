@@ -1,0 +1,10 @@
+XOXO2 on lisafunktsionaalsusega trips-traps-trull. 
+Seda mängitakse 4x4 ruudustikul:
+Mõlemal mängijal on oma kujund, millest tuleb saada 3 pikkune rida või diagonaal.
+Füüsilises mängus asetatakse alusele kordamööda oma kujundeid väikestel papitükkidel, 
+millel on mõlemal pool sama kujund aga erinev värv ( oranž ja sinine ). 
+Trikk seisneb aga selles,et igal käigul,kui võimalik, tuleb vastase kujund ümber keerata,
+mille käigus muutub tolle värv ja alles seejärel oma kujund lauale lisada. 
+
+
+Menüüsse tagasi saamiseks vajuta mingit klahvi.
