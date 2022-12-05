@@ -186,28 +186,94 @@ def text( text, X, Y, colour):
 
 def draw_menu():
         #1playerbutton
-        pygame.draw.rect(screen, Button_dark,(WIDTH * 3 //10 - WIDTH//200//2,WIDTH * 2//5 - WIDTH//200//2,WIDTH*2//5 + WIDTH//200,WIDTH//10 + WIDTH//200))	
-        pygame.draw.rect(screen, BG_COLOUR,(WIDTH * 3 //10,WIDTH*2//5,WIDTH*2//5,WIDTH//10))
-
+        pygame.draw.rect(screen,Button_dark,[WIDTH//2-100,WIDTH*4//10+10, 200, 40]) 
         #2playerbutton
-        pygame.draw.rect(screen, Button_dark,(WIDTH * 3 //10 - WIDTH//400,WIDTH * 3//5 - WIDTH//400,WIDTH*2//5 + WIDTH//200,WIDTH//10 + WIDTH//200))	
-        pygame.draw.rect(screen, BG_COLOUR,(WIDTH * 3 //10,WIDTH * 3//5,WIDTH*2//5,WIDTH//10))
-
-        text('1 Player',WIDTH//2,WIDTH * 2//5 + 30,blue)
-        text('2 Player',WIDTH//2,WIDTH * 3//5 + 30,blue)
+        pygame.draw.rect(screen,Button_dark,[WIDTH//2-100,WIDTH*5//10+10, 200, 40]) 
+        #tutorial
+        pygame.draw.rect(screen,Button_dark,[WIDTH//2-100,WIDTH*6//10+10, 200, 40]) 
+        
+        text('1 Player',WIDTH//2,WIDTH * 4//10 + 30,blue)
+        text('2 Player',WIDTH//2,WIDTH * 5//10 + 30,blue)
         text('XOXO',WIDTH//2,WIDTH//5, orange)
         text('2',WIDTH//2 + WIDTH//200 * 8, WIDTH//5 - WIDTH//200 * 2, blue)
+        text('tutorial', WIDTH//2,WIDTH * 6//10 + 30,blue)
+
+def draw_tutorial():
+    screen.fill(BG_COLOUR)
+    with open('tekst.txt', encoding='utf8') as f:
+        i=0
+        for rida in f:
+            text(rida.strip(),WIDTH//2,WIDTH//5+30*i,blue)
+            i+=1
+    pygame.display.flip()
+    flag=True
+    pygame.event.clear()
+    while flag==True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                flag=False
     
+def bot_menu():
+    screen.fill(BG_COLOUR)
+    pygame.draw.rect(screen,Button_dark,[WIDTH//2-100,WIDTH*4//10+10, 200, 40])
+    pygame.draw.rect(screen,Button_dark,[WIDTH//2-100,WIDTH*5//10+10, 200, 40])
+    text('Hea bot',WIDTH//2,WIDTH * 4//10 + 30,blue)
+    text('Random bot',WIDTH//2,WIDTH * 5//10 + 30,blue)
+    pygame.display.update()
+    
+    hea_but=pygame.Rect(WIDTH//2-100,WIDTH*4//10+10, 200, 40)
+    suva_but=pygame.Rect(WIDTH//2-100,WIDTH*5//10+10, 200, 40)
+    
+    pygame.event.clear()
+    flag=True
+    while flag==True:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and hea_but.collidepoint(event.pos):
+                flag=False  
+                #return  ...
+                # mida teeb, kui hea bot valida, tuleb siia   
+            if event.type == pygame.MOUSEBUTTONDOWN and suva_but.collidepoint(event.pos):
+                flag=False
+                #return ...
+                # random bot tegevus siia
+
+def clear_board():
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i,j] != 0:
+                board[i,j] = 0
+def full_check():
+    for i in range(4):
+        for j in range(4):
+            if board[i,j] == 0:
+                return False
+    return True
+        
+                    
 
 screen.fill(BG_COLOUR)
 
 menu = True #laseb menüü ja mängimise vahel muuta, kui menuu while tehtud ss siin muuda trueks
 
+but1=pygame.Rect(WIDTH//2-100,WIDTH*4//10+10, 200, 40)
+but2=pygame.Rect(WIDTH//2-100,WIDTH*5//10+10, 200, 40)
+but3=pygame.Rect(WIDTH//2-100,WIDTH*6//10+10, 200, 40)
+
 while True:
     while menu:
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and but1.collidepoint(event.pos):
+                bot_menu()
                 menu = False
+            if event.type == pygame.MOUSEBUTTONDOWN and but2.collidepoint(event.pos):
+                bot=0
+                menu = False
+            if event.type == pygame.MOUSEBUTTONDOWN and but3.collidepoint(event.pos):
+                draw_tutorial()
+                
+                
         
         screen.fill(BG_COLOUR)
         draw_menu()
@@ -230,6 +296,8 @@ while True:
                                 pygame.display.update()
                                 message_display('Good job!')
                                 pygame.display.update()
+                                menu=True
+                                
                         
                         else:
                             if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
@@ -251,6 +319,7 @@ while True:
                                     pygame.display.update()
                                     message_display('Good job!')
                                     pygame.display.update()
+                                    menu=True
                                 
                     case 2:
                         if bot == 1 and player == 1:
@@ -282,9 +351,17 @@ while True:
                 print(gamestate)
                 print(mouse_pos())
                 print(board[mouse_pos()[0], mouse_pos()[1]])
+                
         
         screen.fill(BG_COLOUR)
         draw_board(board)
         draw_lines(size)
         pygame.display.update()
+        if full_check()==True:
+            message_display('Laud sai täis!')
+            menu=True
+            break
+        if menu== True:
+           clear_board()
+           break
     
