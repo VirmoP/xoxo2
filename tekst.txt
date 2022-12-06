@@ -8,3 +8,5 @@ mille käigus muutub tolle värv ja alles seejärel oma kujund lauale lisada.
 
 
 Menüüsse tagasi saamiseks vajuta mingit klahvi.
+
+Mängu sees "r" paned mängu algseisu ja "m" viib menüüsse tagasi
