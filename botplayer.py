@@ -190,3 +190,31 @@ def bot_flip(board):
     return board
     
     
+#arvutab parima koha kuhu uus tile panna ja mis v'rvi see on (valueboardi v;;rtuse esimene oranz, teine sinine)
+def bot_newtile(board):
+    valueboard = {}
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] != 0:
+                valueboard[(i,j)] = [-10,-10]
+            else:
+                orangeboard = copy.copy(board)
+                blueboard = copy.copy(board)
+                orangeboard[i][j] = 1
+                blueboard[i][j] = 2
+                valueboard[(i,j)] = [board_value(orangeboard), board_value(blueboard)] 
+    
+    maksimal = [(0,0), 0]
+    for tile in valueboard:
+        for varv in range(2):
+            if valueboard[tile][varv] > valueboard[maksimal[0]][maksimal[1]]:
+                maksimal = [tile, varv]
+    
+    match maksimal[1]:
+        case 0:
+            board[maksimal[0][0]][maksimal[0][1]] = 1
+        case 1:
+            board[maksimal[0][0]][maksimal[0][1]] = 2
+        
+    return board
+    
