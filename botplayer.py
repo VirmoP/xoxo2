@@ -69,25 +69,40 @@ def board_value(board):
     value = 0
     for j in range(4):
         for i in range(4):
-            if board[i][j] in (3,4):
+            if i in (1,2) and j in (1,2) and board[i][j] in (1,2):
+                value += 10
+            if board[i][j] in (1,2,3,4):
+                
                 #vertical
                 if i-1 >= 0 and i+1 <= 3:
                     if board[i][j] == board[i+1][j] == board[i-1][j]:
-                        value -= 100
+                        if board[i][j] in (1,2):
+                            value += 50
+                        else:
+                            value -= 100
 
                 #horizontal
                 if j-1 >= 0 and j+1 <= 3:
                     if board[i][j] == board[i][j+1] == board[i][j-1]:
-                        value -= 100
+                        if board[i][j] in (1,2):
+                            value += 50
+                        else:
+                            value -= 100
 
                 #desc diag
                 if i-1 >= 0 and i+1 <= 3 and j-1 >= 0 and j+1 <= 3:
                     if board[i][j] == board[i+1][j+1] == board[i-1][j-1]:
-                        value -= 100
+                        if board[i][j] in (1,2):
+                            value += 50
+                        else:
+                            value -= 100
 
                     #asc diag
                     if board[i][j] == board[i+1][j-1] == board[i-1][j+1]:
-                        value -= 100
+                        if board[i][j] in (1,2):
+                            value += 50
+                        else:
+                            value -= 100
     
     return value
 
