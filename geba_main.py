@@ -106,9 +106,43 @@ def flip_pick():
                             if board[mouse_pos()[1]+i,mouse_pos()[0]+j] == 0:
                                 board[mouse_pos()[1]+i,mouse_pos()[0]+j] = 6
 
+def flip_check(board):
+
+    if player==0:#kuna ringi kord on, siis vaatab, kas ristide ehk maatriksi 1 ja 2 ümbruses on 0
+        for i in range(4):
+            for j in range(4):
+                if board[i,j] in (3,4):
+                    if board[i+1,j]*board[i,j+1]==0:
+                        return True
+                    if j > 0 and board[i,j-1]==0:
+                        return True
+                    if i >0 and board[i-1,j]==0:
+                        return True
+        return False
+    if player==1: #kuna risti kord on, siis vaatab, kas ringide ehk maatriksi 3 ja 4 ümbruses on 0
+        for i in range(4):
+            for j in range(4):
+                if board[i,j] in (3,4):
+                    if board[i+1,j]*board[i,j+1]==0:
+                        return True
+                    if j>0 and board[i,j-1]==0:
+                        return True
+                    if i > 0 and board[i-1,j]==0:
+                        return True
+        return False
 
 def tile_flip():
     global gamestate
+    global player
+    print ('flipcheck',flip_check(board))
+    if flip_check(board)==False:
+        gamestate = 2
+        if player ==1:
+            player =2
+        if player ==2:
+            player =1
+        return None
+        
     if board[mouse_pos()[1],mouse_pos()[0]] == 6:
         match board[saved_tile[0],saved_tile[1]]:
             case 1:
@@ -142,6 +176,7 @@ def draw_board(board):
                     draw_tile(blue, 'o', (i,j))
                 case 5:
                     draw_pick_color((i,j))
+
 
 def win_check(board):
     for j in range(4):
@@ -257,6 +292,9 @@ def full_check():
             if board[i,j] == 0:
                 return False
     return True
+
+
+
         
                     
 
@@ -309,7 +347,8 @@ while True:
                                 board = botplayer.bot_flip(board)
                             elif heabot == 0:
                                 board = botplayer.bot_fliprandom(board)
-                            gamestate = 2
+                            
+                            gamestate = 1
                             print(win_check(board))
                             if win_check(board)[0]:
                                 screen.fill(BG_COLOUR)
@@ -332,6 +371,7 @@ while True:
                                 gamestate = 1
 
                     case 1:
+                        
                         if bot == 1 and player == 1:
                             gamestate = 2
                         
@@ -350,6 +390,7 @@ while True:
                                         message_display('Ring võitis!')
                                     pygame.display.update()
                                     menu=True
+                                
                                 
                     case 2:
                         if bot == 1 and player == 1:
