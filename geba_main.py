@@ -133,14 +133,9 @@ def flip_check(board):
 
 def tile_flip():
     global gamestate
-    global player
     print ('flipcheck',flip_check(board))
     if flip_check(board)==False:
         gamestate = 2
-        if player ==1:
-            player =2
-        if player ==2:
-            player =1
         return None
         
     if board[mouse_pos()[1],mouse_pos()[0]] == 6:
