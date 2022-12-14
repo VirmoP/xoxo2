@@ -11,6 +11,7 @@ BG_COLOUR = (20, 150, 90)
 blue = (0,2,150)
 orange = (200, 50, 50)
 black = (0,0,0)
+turncolour = (80, 230, 200)
 Button_dark = (10,130, 70)
 white = (255, 255, 255)
 size = WIDTH, HEIGHT = (800, 800)
@@ -52,7 +53,18 @@ def draw_tile(colour, shape, spot):
         pygame.draw.rect(screen, colour, (spot[0]*cellwidth, spot[1]*cellwidth, WIDTH//4, HEIGHT//4))
         pygame.draw.circle(screen, white, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), WIDTH//10)
         pygame.draw.circle(screen, colour, (spot[0]*cellwidth+WIDTH//8, spot[1]*cellwidth+HEIGHT//8), WIDTH//10-20)
-        
+
+def draw_play_order(player, gamestate):
+    pygame.draw.rect(screen, turncolour, (WIDTH-100, 0, 100, 50))
+    if gamestate in (0,1):
+        text("Flip", 760, 30, black)
+    elif gamestate in (2,3):
+        text("Place", 760, 30, black)
+    if player == 0:
+        text("O", 720, 30, black)
+    elif player == 1:
+        text("X", 720, 30, black)
+
 def mouse_pos():
     spot = list(pygame.mouse.get_pos())
     for i in range(2):
@@ -107,36 +119,16 @@ def flip_pick():
                                 board[mouse_pos()[1]+i,mouse_pos()[0]+j] = 6
 
 def flip_check(board):
-
-    if player==0:#kuna ringi kord on, siis vaatab, kas ristide ehk maatriksi 1 ja 2 ümbruses on 0
-        for i in range(4):
-            for j in range(4):
-                if board[i,j] in (3,4):
-                    if board[i+1,j]*board[i,j+1]==0:
-                        return True
-                    if j > 0 and board[i,j-1]==0:
-                        return True
-                    if i >0 and board[i-1,j]==0:
-                        return True
-        return False
-    if player==1: #kuna risti kord on, siis vaatab, kas ringide ehk maatriksi 3 ja 4 ümbruses on 0
-        for i in range(4):
-            for j in range(4):
-                if board[i,j] in (3,4):
-                    if board[i+1,j]*board[i,j+1]==0:
-                        return True
-                    if j>0 and board[i,j-1]==0:
-                        return True
-                    if i > 0 and board[i-1,j]==0:
-                        return True
-        return False
+    global player
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] in (1,2) and player == 0 or board[i][j] in (3,4) and player == 1:
+                if board[i+1][j] == 0 or board[i][j+1] == 0 or i>0 and board[i-1][j] == 0 or j>0 and board[i][j-1] == 0:
+                    return True
+    return False
 
 def tile_flip():
     global gamestate
-    print ('flipcheck',flip_check(board))
-    if flip_check(board)==False:
-        gamestate = 2
-        return None
         
     if board[mouse_pos()[1],mouse_pos()[0]] == 6:
         match board[saved_tile[0],saved_tile[1]]:
@@ -227,7 +219,7 @@ def draw_menu():
         text('2 Player',WIDTH//2,WIDTH * 5//10 + 30,blue)
         text('XOXO',WIDTH//2,WIDTH//5, orange)
         text('2',WIDTH//2 + WIDTH//200 * 8, WIDTH//5 - WIDTH//200 * 2, blue)
-        text('tutorial', WIDTH//2,WIDTH * 6//10 + 30,blue)
+        text('Tutorial', WIDTH//2,WIDTH * 6//10 + 30,blue)
 
 def draw_tutorial():
     screen.fill(BG_COLOUR)
@@ -263,18 +255,13 @@ def bot_menu():
     while flag==True:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and hea_but.collidepoint(event.pos):
-                print('valis hea boti')
                 heabot = 1
                 flag=False
-                #return  ...
-                # mida teeb, kui hea bot valida, tuleb siia   
+  
             if event.type == pygame.MOUSEBUTTONDOWN and suva_but.collidepoint(event.pos):
-                print('vlais halva boti')
                 heabot = 0
                 flag=False
-                
-                #return ...
-                # random bot tegevus siia
+
 
 def clear_board():
     for i in range(len(board)-1):
@@ -284,7 +271,7 @@ def clear_board():
 def full_check():
     for i in range(4):
         for j in range(4):
-            if board[i,j] == 0:
+            if board[i,j] in (0,5):
                 return False
     return True
 
@@ -337,13 +324,15 @@ while True:
                 match gamestate:
                     case 0:
                         if bot == 1 and player == 1:
-                            print(heabot)
-                            if heabot == 1:
-                                board = botplayer.bot_flip(board)
-                            elif heabot == 0:
-                                board = botplayer.bot_fliprandom(board)
+                            if flip_check(board):
+                                print(heabot)
+                                if heabot == 1:
+                                    board = botplayer.bot_flip(board)
+                                elif heabot == 0:
+                                    board = botplayer.bot_fliprandom(board)
                             
                             gamestate = 1
+                            
                             print(win_check(board))
                             if win_check(board)[0]:
                                 screen.fill(BG_COLOUR)
@@ -356,14 +345,18 @@ while True:
                                     message_display('Ring võitis!')
                                     
                                 pygame.display.update()
+                                player = 0
                                 menu=True
                                 
                         
                         else:
-                            if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
-                                flip_clear()
-                                flip_pick()
-                                gamestate = 1
+                            if flip_check(board):
+                                if board[mouse_pos()[1],mouse_pos()[0]] in (1,2,3,4):
+                                    flip_clear()
+                                    flip_pick()
+                                    gamestate = 1
+                            else:
+                                gamestate = 2
 
                     case 1:
                         
@@ -384,6 +377,7 @@ while True:
                                     elif win_check(board)[1] in (3,4):
                                         message_display('Ring võitis!')
                                     pygame.display.update()
+                                    player = 0
                                     menu=True
                                 
                                 
@@ -426,6 +420,7 @@ while True:
         
         screen.fill(BG_COLOUR)
         draw_board(board)
+        draw_play_order(player, gamestate)
         draw_lines(size)
         pygame.display.update()
         if full_check()==True:
