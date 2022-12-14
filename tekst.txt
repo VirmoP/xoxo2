@@ -1,12 +1,20 @@
-XOXO2 on lisafunktsionaalsusega trips-traps-trull. 
-Seda mängitakse 4x4 ruudustikul:
-Mõlemal mängijal on oma kujund, millest tuleb saada 3 pikkune rida või diagonaal.
-Füüsilises mängus asetatakse alusele kordamööda oma kujundeid väikestel papitükkidel, 
-millel on mõlemal pool sama kujund aga erinev värv ( oranž ja sinine ). 
-Trikk seisneb aga selles,et igal käigul,kui võimalik, tuleb vastase kujund ümber keerata,
-mille käigus muutub tolle värv ja alles seejärel oma kujund lauale lisada. 
+XOXO2 on klassikalisel trips-traps-trullil põhinev lauamäng
 
+Mäng põhineb 4x4 ruudustikul ja käib 2 mängija vahel.
+Mõlemal mängijal on 8 ühe sümboliga papist ruudukest, 
+mis on ühelt poolt sinised, teiselt oranžid.
+Ühe mängija ruudukesed on mõlemalt poolt märgitud X, teise omad O.
+Mängu eesmärk on saada 3 sama värvi ruudukest ritta, seda kontrollitakse peale keeramisfaasi.
+Mäng koosneb kahest omavhel korduvast faasist.
+Esiteks käib mängija nr.1 oma ruudukese omavalikulise värviga
+siis keerab mängija nr.2 mängija nr.1 ruudukese ümber, 
+seekäigus vahetab ruuduke värvi. Peale seda käib mängija nr.2 oma
+ruudukese ja mängija nr.1 keerab mingi mängija nr.2 ruudukese ümber.
+Seejärel protsess kordub.
 
-Menüüsse tagasi saamiseks vajuta mingit klahvi.
+Lisa -
+Keerama ei pea seda ruudukest, mis just maha pandi.
+Kui midagi keerata ei saa liigub mäng edasi.
+Kui laud on täis lõppeb mäng viigiga.
 
-Mängu sees "r" paned mängu algseisu ja "m" viib menüüsse tagasi
+Mängu sees "r" paneb mängu algseisu ja "m" viib menüüsse tagasi
